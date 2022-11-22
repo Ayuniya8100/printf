@@ -1,81 +1,68 @@
 #include "main.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 /**
- * _vfprintf - implement printf by using variadic function
- * @format: the first argument
- * Return: return length
- */
-int _printf(const char *format, ...);
-int _fprintf(FILE *file, const char *format, ...);
-
-int _vfprintf(FILE *file, const char *format, va_list args)
+  * check_for_specifiers - checks if there is a valid format specifier
+  * @format: possible format specifier
+  *Return: pointer to valid function or NULL
+  */
+static int (*check_for_specifiers(const char *format))(va_list)
 {
-	char char_temp;
-	char *string_temp;
-	char ch;
-	int length = 0;
+	unsigned int i;
 
-	while (ch = *format++)
+	func_t ptr[] = {
+		{"c", print_c},
+		{"s", print_s},
+		{NULL, NULL}
+	};
+
+	for (i = 0; ptr[i].t != NULL; i++)
 	{
-		if (ch == '%')
-		{
-			switch (ch = *format++)
-			{
-				case '%':
-					fputc('%', file);
-					length++;
-					break;
-				case 'c':
-					char_temp = va_arg(args, int);
-					fputc(char_temp, file);
-					length++;
-					break;
-				case 's':
-					string_temp = va_arg(args, char *);
-					fputs(string_temp, file);
-					length += strlen(string_temp);
-					break;
-			}
-		}
-		else
-		{
-			fputc(ch, file);
-			length++;
-		}
+		if (*(ptr[i].t) == *format)
+			break;
 	}
-	return (length);
+	return (ptr[i].f);
 }
+
 /**
- *_printf - print format specifier
- * @format: string ointer
- * Return: return length
- */
+  * _printf - to print  anything
+  * @format: list of argument types passed to the function
+  *
+  * Return: number of characters printed
+  */
+
 int _printf(const char *format, ...)
 {
+	unsigned int i, count = 0;
 	va_list args;
+	int (*f)(va_list);
 
+	if (format == NULL)
+		return (-1);
 	va_start(args, format);
-	int length = _vfprintf(stdout, format, args);
-
+	while (format[i])
+	{
+		for (i = 0; format[i] != '%' && format[i]; i++)
+		{
+			_putchar(format[i]);
+			count++;
+		}
+	if (!format[i])
+		return (count);
+	f = check_for_specifiers(&format[i + 1]);
+	if (f != NULL)
+	{
+		count += f(args);
+		i += 2;
+		continue;
+	}
+	if (!format[i + 1])
+		return (-1);
+	_putchar(format[i]);
+	count++;
+	if (format[i + 1] == '%')
+		i += 2;
+	else
+		i++;
+	}
 	va_end(args);
-	return (length);
-}
-/**
- * _fprintf - function definition for file handiling
- * @file: string pointer
- * @format: string pointer
- * Return: return length
- */
-int _fprintf(FILE *file, const char *format, ...)
-{
-	va_list args;
-	int length;
-
-	va_start(args, format);
-	length = _vfprintf(file, format, args);
-	va_end(args);
-	return (length);
-}
+	return (count);
+	}
