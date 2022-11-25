@@ -98,6 +98,7 @@ int print_reverse(va_list types, char buffer[],
 	UNUSED(flags);
 	UNUSED(width);
 	UNUSED(size);
+
 	str = va_arg(types, char *);
 	if (str == NULL)
 	{
@@ -105,7 +106,9 @@ int print_reverse(va_list types, char buffer[],
 		str = ")Null(";
 	}
 	for (i = 0; str[i]; i++)
-		for (i = i - 1; i >= 0; i--)
+		;
+
+	for (i = i - 1; i >= 0; i--)
 	{
 		char z = str[i];
 
@@ -114,6 +117,7 @@ int print_reverse(va_list types, char buffer[],
 	}
 	return (count);
 }
+
 /**
    * print_rot13string - Print a string in rot13.
    * @types: Lista of arguments

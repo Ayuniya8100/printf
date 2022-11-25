@@ -27,8 +27,9 @@ int print_char(va_list types, char buffer[],
   * @size: Size specifier
   * Return: Number of chars printed
   */
+
 int print_string(va_list types, char buffer[],
-		int flags, int width, int precision, int size)
+				int flags, int width, int precision, int size)
 {
 	int length = 0, i;
 	char *str = va_arg(types, char *);
@@ -64,9 +65,10 @@ int print_string(va_list types, char buffer[],
 			write(1, &str[0], length);
 			return (width);
 		}
-		return (write(1, str, length));
 	}
+	return (write(1, str, length));
 }
+
 /**
   * print_percent - Prints a percent sign
   * @types: Lista of arguments
